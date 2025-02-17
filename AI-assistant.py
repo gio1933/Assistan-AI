@@ -2,6 +2,8 @@ import pyttsx3
 import datetime
 import speech_recognition as sr
 import wikipedia
+import smtplib
+import webbrowser as wb
 
 engine = pyttsx3.init()
 
@@ -63,6 +65,15 @@ def TakeCommand():
 
 # TakeCommand()
 
+def sendEmail(to,content):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+
+    server.login('user@gmail.com','password')
+    server.sendmail('user@gmail.com', to, content)
+    server.close()
+
 if __name__ == "__main__":
 
     wishme()
@@ -70,14 +81,50 @@ if __name__ == "__main__":
     while True:
         query = TakeCommand().lower()
 
-        if 'time' in query:
+        if 'hora es' in query:
             time_()
         
-        elif 'date' in query:
+        elif 'la fecha' in query:
             date_()
 
-        elif 'wikipedia' in query:
+        elif 'buscar en wikipedia' in query:
             speak("Buscando en Wikipedia...")
             query = query.replace("wikipedia", "")
             result = wikipedia.summary(query,sentences=3)
             speak("Según Wikipedia, " + result)
+        
+        elif 'enviar correo' in query:
+            try:
+                speak("¿Que debo escribir?")
+                content = TakeCommand()
+
+                # reciever = 'reciever_is_me@gmail.com'
+                speak("¿Quién es el destinatario?")
+                reciever = input("Ingresa el correo destinatario: ")
+                to = reciever
+                sendEmail(to,content)
+                speak(content)
+                speak("Correo enviado")
+
+            except Exception as e:
+                print(e)
+                speak("Correo no enviado")
+
+        # elif 'buscar en google' in query:
+        #     speak("¿Qué debo buscar?")
+        #     chromepath = 'C:/Program Files/Google/Chrome/Application/chrome.exe %s'
+
+        #     search = TakeCommand().lower()
+        #     wb.get(chromepath).open_new_tab(search + '.com')
+
+        elif 'buscar en youtube' in query:
+            speak("¿Qué debo buscar?")
+            search_Term = TakeCommand().lower()
+            speak("Buscando en YouTube...")
+            wb.open('https://www.youtube.com/results?search_query='+search_Term)
+
+        elif 'buscar en google' in query:
+            speak("¿Qué debo buscar?")
+            search_Term = TakeCommand().lower()
+            speak("Buscando en Google...")
+            wb.open('https://www.google.com/search?q='+search_Term)
