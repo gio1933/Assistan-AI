@@ -1,5 +1,7 @@
 import pyttsx3
 import datetime
+import speech_recognition as sr
+import wikipedia
 
 engine = pyttsx3.init()
 
@@ -39,4 +41,43 @@ def wishme():
 
     speak("Estoy aquí para ayudarte con cualquier cosa que necesites. ¿En qué puedo ayudarte?")
 
-wishme()
+# wishme()
+
+def TakeCommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Escuchando...")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+    
+    try:
+        print("Procesando...")
+        query = r.recognize_google(audio, language='es-ES')
+        print(query)
+
+    except Exception as e:
+        print(e)
+        speak("Lo siento, no pude entender lo que dijiste. Por favor, repite lo que querias decirme")
+        return "None"
+    return query
+
+# TakeCommand()
+
+if __name__ == "__main__":
+
+    wishme()
+
+    while True:
+        query = TakeCommand().lower()
+
+        if 'time' in query:
+            time_()
+        
+        elif 'date' in query:
+            date_()
+
+        elif 'wikipedia' in query:
+            speak("Buscando en Wikipedia...")
+            query = query.replace("wikipedia", "")
+            result = wikipedia.summary(query,sentences=3)
+            speak("Según Wikipedia, " + result)
