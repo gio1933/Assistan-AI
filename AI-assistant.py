@@ -4,6 +4,7 @@ import speech_recognition as sr
 import wikipedia
 import smtplib
 import webbrowser as wb
+import psutil
 
 engine = pyttsx3.init()
 
@@ -74,6 +75,17 @@ def sendEmail(to,content):
     server.sendmail('user@gmail.com', to, content)
     server.close()
 
+def cpu():
+    usage = str(psutil.cpu_percent())
+    speak('La CPU está en'+usage)
+
+def battery():
+    battery = psutil.sensors_battery()
+    percentage = battery.percent
+    speak('La batería está en'+str(percentage)+'%')
+
+
+
 if __name__ == "__main__":
 
     wishme()
@@ -128,3 +140,9 @@ if __name__ == "__main__":
             search_Term = TakeCommand().lower()
             speak("Buscando en Google...")
             wb.open('https://www.google.com/search?q='+search_Term)
+
+        elif 'la cpu' in query:
+            cpu()
+        
+        elif 'la batería' in query:
+            battery()
