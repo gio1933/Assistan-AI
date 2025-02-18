@@ -5,8 +5,13 @@ import wikipedia
 import smtplib
 import webbrowser as wb
 import psutil
+import pyjokes
+import os
 
 engine = pyttsx3.init()
+
+engine.setProperty('rate', 190)
+engine.setProperty('volume', 1)
 
 def speak(audio):
     engine.say(audio)
@@ -27,7 +32,12 @@ def date_():
     speak(str(year))  # Convertir a cadena
 
 def wishme():
-    speak("Bienvenido")
+    try:
+        nombre_usuario = os.getlogin()
+    except Exception:
+        nombre_usuario = os.environ.get('USERNAME') or os.environ.get('USER')
+    
+    speak(f"Bienvenido {nombre_usuario}")
 
     hour = datetime.datetime.now().hour
     if hour >= 6 and hour < 12:
@@ -84,9 +94,17 @@ def battery():
     percentage = battery.percent
     speak('La batería está en'+str(percentage)+'%')
 
+def joke():
+    speak(pyjokes.get_joke(language='es'))
+
 
 
 if __name__ == "__main__":
+
+    try:
+        nombre_usuario = os.getlogin()
+    except Exception:
+        nombre_usuario = os.environ.get('USERNAME') or os.environ.get('USER')
 
     wishme()
 
@@ -122,13 +140,6 @@ if __name__ == "__main__":
                 print(e)
                 speak("Correo no enviado")
 
-        # elif 'buscar en google' in query:
-        #     speak("¿Qué debo buscar?")
-        #     chromepath = 'C:/Program Files/Google/Chrome/Application/chrome.exe %s'
-
-        #     search = TakeCommand().lower()
-        #     wb.get(chromepath).open_new_tab(search + '.com')
-
         elif 'buscar en youtube' in query:
             speak("¿Qué debo buscar?")
             search_Term = TakeCommand().lower()
@@ -146,3 +157,10 @@ if __name__ == "__main__":
         
         elif 'la batería' in query:
             battery()
+
+        elif 'cuéntame un chiste' in query:
+            joke()
+
+        elif 'adiós' in query:
+            speak(f"hasta pronto {nombre_usuario}")
+            quit()
