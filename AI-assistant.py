@@ -10,7 +10,7 @@ import os
 
 engine = pyttsx3.init()
 
-engine.setProperty('rate', 190)
+engine.setProperty('rate', 210)
 engine.setProperty('volume', 1)
 
 def speak(audio):
@@ -54,8 +54,6 @@ def wishme():
 
     speak("Estoy aquí para ayudarte con cualquier cosa que necesites. ¿En qué puedo ayudarte?")
 
-# wishme()
-
 def TakeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -73,8 +71,6 @@ def TakeCommand():
         speak("Lo siento, no pude entender lo que dijiste. Por favor, repite lo que querias decirme")
         return "None"
     return query
-
-# TakeCommand()
 
 def sendEmail(to,content):
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -97,7 +93,51 @@ def battery():
 def joke():
     speak(pyjokes.get_joke(language='es'))
 
+def write_note_with_date(notes):
+    strTime = datetime.datetime.now().strftime("%H:%M:%S")
+    with open('notes.txt', 'a') as file:  # Usar 'a' para agregar al final del archivo
+        file.write(f"{strTime} :- {notes}\n")
 
+def write_note_without_date(notes):
+    with open('notes.txt', 'a') as file:  # Usar 'a' para agregar al final del archivo
+        file.write(f"{notes}\n")
+
+def read_notes():
+    with open('notes.txt', 'r') as file:
+        return file.read()
+
+def handle_write_note():
+    speak("¿Qué debo escribir?")
+    notes = TakeCommand()
+    speak(f"{nombre_usuario}, ¿Quieres que incluya la fecha?")
+    ans = TakeCommand()
+
+    if 'sí' in ans or 'claro' in ans or 'por supuesto' in ans or 'incluye la fecha' in ans:
+        write_note_with_date(notes)
+    elif 'no' in ans or 'no incluyas la fecha' in ans:
+        write_note_without_date(notes)
+
+    speak('Termine de anotar lo solicitado.')
+    speak("¿Quieres que abra la nota?")
+    ans = TakeCommand()
+    if 'sí' in ans or 'claro' in ans or 'por supuesto' in ans:
+        notes_content = read_notes()
+        print(notes_content)
+        speak(notes_content)
+    elif 'guarda la nota' in ans:
+        speak('La nota ha sido guardada')
+
+def handle_show_note():
+    speak("¿Quieres que te la lea o la muestre en pantalla?")
+    ans = TakeCommand()
+    notes_content = read_notes()
+
+    if 'leerme la nota' in ans or 'lee la nota' in ans or 'leeme la nota' in ans:
+        speak(notes_content)
+    elif 'mostrarme la nota' in ans or 'muéstrame la nota' in ans:
+        print(notes_content)
+    else:
+        print(notes_content)
 
 if __name__ == "__main__":
 
@@ -164,3 +204,14 @@ if __name__ == "__main__":
         elif 'adiós' in query:
             speak(f"hasta pronto {nombre_usuario}")
             quit()
+
+        elif 'abrir word' in query:
+            speak("Abriendo Microsoft Word...")
+            os.startfile("C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD")
+
+        # Ejemplo de uso en tu código principal
+        elif 'escribe una nota' in query:
+            handle_write_note()
+
+        elif 'muéstrame la nota' in query:
+            handle_show_note()
