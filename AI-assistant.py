@@ -7,6 +7,7 @@ import webbrowser as wb
 import psutil
 import pyjokes
 import os
+import pyautogui
 
 engine = pyttsx3.init()
 
@@ -139,6 +140,15 @@ def handle_show_note():
     else:
         print(notes_content)
 
+def screenshot():
+    try:
+        img = pyautogui.screenshot()
+        img.save('C:/Users/Giovanni/Pictures/screenshot.png')  # Asegúrate de que esta ruta sea válida
+        speak("Captura de pantalla guardada.")
+    except Exception as e:
+        speak("Ocurrió un error al tomar la captura.")
+        print(e)
+
 if __name__ == "__main__":
 
     try:
@@ -146,7 +156,7 @@ if __name__ == "__main__":
     except Exception:
         nombre_usuario = os.environ.get('USERNAME') or os.environ.get('USER')
 
-    wishme()
+    # wishme()
 
     while True:
         query = TakeCommand().lower()
@@ -215,3 +225,7 @@ if __name__ == "__main__":
 
         elif 'muéstrame la nota' in query:
             handle_show_note()
+
+        elif 'tomar captura' in query:
+            speak("Tomando captura...")
+            screenshot()
