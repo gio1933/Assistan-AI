@@ -8,6 +8,7 @@ import os
 import pyautogui
 import psutil
 import pyjokes
+import time
 
 
 engine = pyttsx3.init()
@@ -149,6 +150,21 @@ def screenshot():
         speak("Ocurrió un error al tomar la captura.")
         print(e)
 
+def rest():
+    speak("Descansando... Dime 'despierta' para volver a activarme.")
+    
+    while True:
+        # Escuchar continuamente hasta que se reciba el comando de despertar
+        command = TakeCommand().lower()
+        
+        if 'despierta' in command:
+            speak("Me desperté")
+            break  # Salir del bucle para continuar con el resto del código
+        else:
+            speak("Estoy en modo de descanso. Dime 'despierta' para volver.")
+            time.sleep(1)  # Esperar un segundo antes de volver a escuchar
+
+
 if __name__ == "__main__":
 
     clear = lambda: os.system('cls')
@@ -256,3 +272,6 @@ if __name__ == "__main__":
         elif 'apaga' in query or 'apagar' in query:
             speak("Apagando...")
             os.system("shutdown /s /t 1")
+
+        elif 'descansa' in query or 've a descansar' in query:
+            rest()
