@@ -4,13 +4,13 @@ import speech_recognition as sr
 import wikipedia
 import smtplib
 import webbrowser as wb
-import psutil
-import pyjokes
 import os
 import pyautogui
+import psutil
+import pyjokes
+
 
 engine = pyttsx3.init()
-
 engine.setProperty('rate', 210)
 engine.setProperty('volume', 1)
 
@@ -151,12 +151,16 @@ def screenshot():
 
 if __name__ == "__main__":
 
+    clear = lambda: os.system('cls')
+
+    clear()
+
     try:
         nombre_usuario = os.getlogin()
     except Exception:
         nombre_usuario = os.environ.get('USERNAME') or os.environ.get('USER')
 
-    # wishme()
+    wishme()
 
     while True:
         query = TakeCommand().lower()
@@ -219,7 +223,6 @@ if __name__ == "__main__":
             speak("Abriendo Microsoft Word...")
             os.startfile("C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD")
 
-        # Ejemplo de uso en tu código principal
         elif 'escribe una nota' in query:
             handle_write_note()
 
@@ -229,3 +232,27 @@ if __name__ == "__main__":
         elif 'tomar captura' in query:
             speak("Tomando captura...")
             screenshot()
+
+        elif 'recordar' in query:
+            speak("¿Qué debo recordar?")
+            memory = TakeCommand()
+            speak("Me pediste que recordara" + memory)
+            remember = open('memory.txt','w')
+            remember.write(memory)
+            remember.close()
+
+        elif 'recuerdas algo' in query:
+            remember =open('memory.txt', 'r')
+            speak("Me pediste que recordara" + remember.read())
+
+        elif 'cerrar sesión' in query:
+            speak("Cerrando sesión...")
+            os.system("shutdown -l")
+
+        elif 'reiniciar' in query:
+            speak("Reiniciando...")
+            os.system("shutdown /r /t 1")
+
+        elif 'apaga' in query or 'apagar' in query:
+            speak("Apagando...")
+            os.system("shutdown /s /t 1")
