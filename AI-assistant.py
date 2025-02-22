@@ -275,3 +275,7 @@ if __name__ == "__main__":
 
         elif 'descansa' in query or 've a descansar' in query:
             rest()
+
+        elif 'desconéctate' in query:
+            speak("Desconectando...")
+            quit()
