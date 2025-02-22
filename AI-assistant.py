@@ -9,6 +9,7 @@ import pyautogui
 import psutil
 import pyjokes
 import time
+import requests
 
 
 engine = pyttsx3.init()
@@ -164,6 +165,38 @@ def rest():
             speak("Estoy en modo de descanso. Dime 'despierta' para volver.")
             time.sleep(1)  # Esperar un segundo antes de volver a escuchar
 
+def get_weather(city_name):
+    api_key = "13dc7b5fa5931e769c3cba13b5aee73d"  # Reemplaza con tu clave API
+    base_url = "http://api.openweathermap.org/data/2.5/weather?q="
+    
+    # Construir la URL completa
+    complete_url = f"{base_url}{city_name}&appid={api_key}&units=metric&lang=es"  # Usar 'metric' para obtener la temperatura en Celsius 'lang=es' para español
+
+    # Hacer la solicitud a la API
+    response = requests.get(complete_url)
+    x = response.json()
+
+    # Verificar si la ciudad fue encontrada
+    if x["cod"] != "404":
+        y = x["main"]
+        current_temperature = y["temp"]
+        current_pressure = y["pressure"]
+        current_humidity = y["humidity"]
+        z = x["weather"]
+        weather_description = z[0]["description"]
+
+        # Imprimir y hablar los resultados
+        weather_info = (
+            f"Temperatura: {current_temperature}°C\n"
+            f"Presión atmosférica: {current_pressure} hPa\n"
+            f"Humedad: {current_humidity}%\n"
+            f"Descripción: {weather_description.capitalize()}"
+        )
+        print(weather_info)
+        speak(weather_info)  # Asegúrate de que la función speak esté definida
+    else:
+        speak("Ciudad no encontrada.")
+
 
 if __name__ == "__main__":
 
@@ -231,7 +264,7 @@ if __name__ == "__main__":
         elif 'cuéntame un chiste' in query:
             joke()
 
-        elif 'adiós' in query:
+        elif 'adiós' in query or 'desconéctate' in query:
             speak(f"hasta pronto {nombre_usuario}")
             quit()
 
@@ -276,6 +309,9 @@ if __name__ == "__main__":
         elif 'descansa' in query or 've a descansar' in query:
             rest()
 
-        elif 'desconéctate' in query:
-            speak("Desconectando...")
-            quit()
+
+        elif "clima" in query:
+            speak("Nombre de la ciudad:")
+            print("Nombre de la ciudad:")
+            city_name = TakeCommand()  # Asegúrate de que esta función esté definida
+            get_weather(city_name)
