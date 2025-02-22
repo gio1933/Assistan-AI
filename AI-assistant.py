@@ -1,5 +1,4 @@
 import pyttsx3
-import datetime
 import speech_recognition as sr
 import wikipedia
 import smtplib
@@ -10,7 +9,9 @@ import psutil
 import pyjokes
 import time
 import requests
-
+import json
+from urllib.request import urlopen
+from datetime import datetime, timedelta
 
 engine = pyttsx3.init()
 engine.setProperty('rate', 210)
@@ -21,14 +22,14 @@ def speak(audio):
     engine.runAndWait()
 
 def time_():
-    Time = datetime.datetime.now().strftime("%I:%M:%S") # 12 Hour clock
+    Time = datetime.now().strftime("%I:%M:%S") # 12 Hour clock
     speak("La hora actual es")
     speak(Time)
 
 def date_():
-    year = datetime.datetime.now().year
-    month = datetime.datetime.now().month
-    day = datetime.datetime.now().day
+    year = datetime.now().year
+    month = datetime.now().month
+    day = datetime.now().day
     speak("La fecha actual es")
     speak(str(day))   # Convertir a cadena
     speak(str(month)) # Convertir a cadena
@@ -42,7 +43,7 @@ def wishme():
     
     speak(f"Bienvenido {nombre_usuario}")
 
-    hour = datetime.datetime.now().hour
+    hour = datetime.now().hour
     if hour >= 6 and hour < 12:
         speak("Buenos días")
     elif hour >= 12 and hour < 18:
@@ -198,6 +199,39 @@ def get_weather(city_name):
         speak("Ciudad no encontrada.")
 
 
+
+
+def get_news():
+    api_key = "8e3d9abfde7946e9b98ac95a75ef2768"  # Reemplaza con tu clave API
+    # Obtener la fecha de ayer ya que no muestra las noticias del dia actual
+    yesterday = datetime.now() - timedelta(days=1)
+    today = yesterday.strftime('%D-%M-%Y')  # Formato de fecha YYYY-MM-DD
+    url = f"https://newsapi.org/v2/everything?q=world&from={today}&to={today}&sortBy=publishedAt&language=es&apiKey={api_key}"
+
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            print(data)  # Imprimir la respuesta completa para depuración
+            if data['status'] == 'ok' and data['totalResults'] > 0:
+                speak("Aquí están las noticias del día:")
+                print("Aquí están las noticias del día:")
+                for article in data['articles']:
+                    speak(article['title'])
+                    print(article['title'])
+            else:
+                speak("No se pudieron obtener noticias.")
+                print("No se pudieron obtener noticias.")
+        else:
+            speak(f"Error en la API: {response.status_code} - {response.text}")
+            print(f"Error en la API: {response.status_code} - {response.text}")
+
+    except Exception as e:
+        speak("Ocurrió un error.")
+        print("Ocurrió un error:", str(e))
+
+
+
 if __name__ == "__main__":
 
     clear = lambda: os.system('cls')
@@ -309,9 +343,11 @@ if __name__ == "__main__":
         elif 'descansa' in query or 've a descansar' in query:
             rest()
 
-
         elif "clima" in query:
             speak("Nombre de la ciudad:")
             print("Nombre de la ciudad:")
             city_name = TakeCommand()  # Asegúrate de que esta función esté definida
             get_weather(city_name)
+
+        elif 'noticias' in query:
+            get_news()
