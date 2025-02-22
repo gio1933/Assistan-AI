@@ -230,6 +230,14 @@ def get_news():
         speak("Ocurrió un error.")
         print("Ocurrió un error:", str(e))
 
+def handle_location_query(query):
+    if "dónde es" in query:
+        query = query.replace("dónde es", "").strip()  # Eliminar la frase y espacios
+        location = query
+        speak("Localización solicitada")
+        speak(location)
+        wb.open("https://www.google.com/maps/place/" + location)
+
 
 
 if __name__ == "__main__":
@@ -243,7 +251,7 @@ if __name__ == "__main__":
     except Exception:
         nombre_usuario = os.environ.get('USERNAME') or os.environ.get('USER')
 
-    wishme()
+    # wishme()
 
     while True:
         query = TakeCommand().lower()
@@ -351,3 +359,6 @@ if __name__ == "__main__":
 
         elif 'noticias' in query:
             get_news()
+
+        elif "dónde es" in query:
+            handle_location_query(query)
