@@ -1,8 +1,6 @@
 import pyttsx3
-import speech_recognition as sr
 import wikipedia
 import smtplib
-import webbrowser as wb
 import os
 import pyautogui
 import psutil
@@ -10,8 +8,15 @@ import pyjokes
 import time
 import requests
 import json
+import wolframalpha
+
+import webbrowser as wb
+import speech_recognition as sr
+
 from urllib.request import urlopen
 from datetime import datetime, timedelta
+
+wolframalpha_api = "R8X6Y4-9HY74X9AYL"
 
 engine = pyttsx3.init()
 engine.setProperty('rate', 210)
@@ -198,9 +203,6 @@ def get_weather(city_name):
     else:
         speak("Ciudad no encontrada.")
 
-
-
-
 def get_news():
     api_key = "8e3d9abfde7946e9b98ac95a75ef2768"  # Reemplaza con tu clave API
     # Obtener la fecha de ayer ya que no muestra las noticias del dia actual
@@ -237,6 +239,7 @@ def handle_location_query(query):
         speak("Localización solicitada")
         speak(location)
         wb.open("https://www.google.com/maps/place/" + location)
+
 
 
 
@@ -362,3 +365,25 @@ if __name__ == "__main__":
 
         elif "dónde es" in query:
             handle_location_query(query)
+
+        elif 'calcula' in query:            
+            client = wolframalpha.Client(wolframalpha_api)
+            indx = query.lower().split().index('calcula')
+            query = query.split()[indx + 1:]
+            res = client.query(' '.join(query))
+            answer = next(res.results).text
+            print("La respuesta es " + answer)
+            speak("La respuesta es " + answer)
+
+        # Se manejan en ingles las consultas y los resultados se devuelven en español 
+        elif "what is" in query or "who is" in query: 
+            client = wolframalpha.Client(wolframalpha_api)
+            # Agregar el parámetro de idioma a la consulta
+            query = f"{query} in Spanish"
+            res = client.query(query)
+            
+            try:
+                print (next(res.results).text)
+                speak (next(res.results).text)
+            except StopIteration:
+                print ("No results") 
