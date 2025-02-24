@@ -276,7 +276,7 @@ if __name__ == "__main__":
                 speak("¿Que debo escribir?")
                 content = TakeCommand()
 
-                # reciever = 'reciever_is_me@gmail.com'
+                # Para poder usar la funcion de 'enviar correo' se require poner seguridad baja en la cuenta de Gmail
                 speak("¿Quién es el destinatario?")
                 reciever = input("Ingresa el correo destinatario: ")
                 to = reciever
@@ -316,6 +316,18 @@ if __name__ == "__main__":
         elif 'abrir word' in query:
             speak("Abriendo Microsoft Word...")
             os.startfile("C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD")
+
+        elif 'abrir excel' in query:
+            speak("Abriendo Microsoft Word...")
+            os.startfile("C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL")
+
+        elif 'abrir power ponit' in query:
+            speak("Abriendo Microsoft Word...")
+            os.startfile("C:\\Program Files\\Microsoft Office\\root\\Office16\\POWERPNT")
+
+        elif 'abrir correo' in query or 'abrir outlook' in query:
+            speak("Abriendo Microsoft Word...")
+            os.startfile("C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK")
 
         elif 'escribe una nota' in query:
             handle_write_note()
